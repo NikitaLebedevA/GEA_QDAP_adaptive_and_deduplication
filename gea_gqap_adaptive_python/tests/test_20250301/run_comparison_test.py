@@ -39,7 +39,7 @@ from gea_gqap_adaptive_python import (
 from gea_gqap_python import load_model as load_model_na
 from gea_gqap_python.algorithm import run_ga, AlgorithmConfig
 
-NUM_WORKERS = int(os.environ.get("NUM_WORKERS", 32))
+NUM_WORKERS = int(os.environ.get("NUM_WORKERS", 16))
 
 
 def _ts() -> str:
