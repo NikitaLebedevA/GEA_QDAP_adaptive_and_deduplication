@@ -45,6 +45,8 @@ def _select_population_dedupe(
     population_size: int,
     model: Model,
     rng: np.random.Generator,
+    start_time: float = 0.0,
+    time_limit: float | None = None,
 ) -> Tuple[List[Individual], List[str]]:
     """
     Из пула отбирает уникальных по генотипу (permutation), при нехватке дозаполняет
@@ -64,6 +66,8 @@ def _select_population_dedupe(
         return pop, origins
     best_ind = min(unique_list, key=lambda x: x[0].cost)[0]
     while len(unique_list) < population_size:
+        if time_limit is not None and (time.perf_counter() - start_time) >= time_limit:
+            break
         new_perm = mutation(best_ind.permutation, model, rng)
         new_ind = evaluate_permutation(new_perm, model)
         if math.isfinite(new_ind.cost):
@@ -120,7 +124,10 @@ def run_adaptive_ga(
     best_solution = heuristic2(model)
     population.append(best_solution)
 
+    init_budget = (cfg.time_limit * 0.1) if cfg.time_limit is not None else None
     while len(population) < cfg.population_size:
+        if init_budget is not None and (time.perf_counter() - start_time) >= init_budget:
+            break
         mutated = mutation(population[0].permutation, model, rng)
         individual = evaluate_permutation(mutated, model)
         if math.isfinite(individual.cost):
@@ -325,7 +332,8 @@ def run_adaptive_ga(
         pool.sort(key=lambda item: item[0].cost)
         if getattr(cfg, "deduplicate", False):
             population, top_origins = _select_population_dedupe(
-                pool, cfg.population_size, model, rng
+                pool, cfg.population_size, model, rng,
+                start_time=start_time, time_limit=cfg.time_limit,
             )
         else:
             population = [ind for ind, _ in pool[: cfg.population_size]]

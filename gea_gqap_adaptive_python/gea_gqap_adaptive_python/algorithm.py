@@ -56,7 +56,10 @@ def run_ga(
     best_solution = heuristic2(model)
     population.append(best_solution)
 
+    init_budget = (cfg.time_limit * 0.1) if cfg.time_limit is not None else None
     while len(population) < cfg.population_size:
+        if init_budget is not None and (time.perf_counter() - start_time) >= init_budget:
+            break
         mutated = mutation(population[0].permutation, model, rng)
         individual = evaluate_permutation(mutated, model)
         if math.isfinite(individual.cost):

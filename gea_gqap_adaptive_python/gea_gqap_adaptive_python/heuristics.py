@@ -31,27 +31,30 @@ def heuristic2(model: Model) -> Individual:
             X[idx, j] = 1
             count[idx] += model.aij[idx, j]
 
-    # Repair feasibility if necessary
-    for i in range(I):
-        while count[i] > model.bi[i] + 1e-9:
-            assigned_jobs = np.where(X[i] == 1)[0]
-            if assigned_jobs.size == 0:
-                break
-            job_to_move = assigned_jobs[np.argmax(model.aij[i, assigned_jobs])]
-            X[i, job_to_move] = 0
-            count[i] -= model.aij[i, job_to_move]
-            target = np.argsort(model.aij[:, job_to_move])
-            for new_i in target:
-                if new_i == i:
-                    continue
-                if count[new_i] + model.aij[new_i, job_to_move] <= model.bi[new_i] + 1e-9:
-                    X[new_i, job_to_move] = 1
-                    count[new_i] += model.aij[new_i, job_to_move]
+    # Repair feasibility (MATLAB-style cascading repair)
+    cvar = model.bi - count
+    Wij = X * model.aij
+    max_repair_passes = I * J
+    repair_pass = 0
+    while np.any(cvar < -1e-9) and repair_pass < max_repair_passes:
+        repair_pass += 1
+        for i in range(I):
+            while cvar[i] < -1e-9:
+                assigned_jobs = np.where(X[i] == 1)[0]
+                if assigned_jobs.size == 0:
                     break
-            else:
-                X[i, job_to_move] = 1
-                count[i] += model.aij[i, job_to_move]
-                break
+                b = assigned_jobs[np.argmax(Wij[i, assigned_jobs])]
+                count[i] -= model.aij[i, b]
+                cvar[i] = model.bi[i] - count[i]
+                X[i, b] = 0
+                Wij[i, b] = 0
+                d = int(np.argmin(model.aij[:, b]))
+                if d == i:
+                    d = int(np.argmax(cvar))
+                count[d] += model.aij[d, b]
+                cvar[d] = model.bi[d] - count[d]
+                X[d, b] = 1
+                Wij[d, b] = model.aij[d, b]
 
     permutation = np.argmax(X, axis=0)
     return evaluate_permutation(permutation, model)
