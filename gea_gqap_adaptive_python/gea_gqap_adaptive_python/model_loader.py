@@ -33,7 +33,7 @@ def _parse_matrix(block: str) -> np.ndarray:
 
 
 def _extract_block(content: str, var_name: str) -> str:
-    pattern = rf"{var_name}\s*=\s*\[(.*?)\];"
+    pattern = rf"\b{var_name}\b\s*=\s*\[(.*?)\];"
     match = re.search(pattern, content, flags=re.DOTALL)
     if not match:
         raise ValueError(f"Could not locate block for {var_name}")
@@ -41,7 +41,7 @@ def _extract_block(content: str, var_name: str) -> str:
 
 
 def _extract_scalar(content: str, var_name: str) -> int:
-    pattern = rf"{var_name}\s*=\s*(\d+);"
+    pattern = rf"\b{var_name}\b\s*=\s*(\d+);"
     match = re.search(pattern, content)
     if not match:
         raise ValueError(f"Could not locate scalar for {var_name}")
