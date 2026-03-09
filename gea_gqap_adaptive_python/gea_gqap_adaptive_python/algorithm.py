@@ -149,9 +149,7 @@ def run_ga(
                 _, _, dominant_individual, dominant_mask = analyze_perm(
                     population[:p_scenario3_count], cfg, model, rng
                 )
-                tail_indices = np.arange(
-                    max(0, n_pop - p_scenario3_count), n_pop
-                )
+                tail_indices = np.arange(max(0, n_pop - p_scenario3_count), n_pop)
                 for _ in range(nmutate_scenario):
                     jj = int(rng.choice(tail_indices))
                     combined_perm = combine_q(

@@ -302,9 +302,13 @@ def run_adaptive_ga(
                 _, _, dominant_individual, dominant_mask = analyze_perm(
                     population[:p_scenario3_count], cfg, model, rng
                 )
+<<<<<<< HEAD
                 tail_indices = np.arange(
                     max(0, n_pop - p_scenario3_count), n_pop
                 )
+=======
+                tail_indices = np.arange(max(0, n_pop - p_scenario3_count), n_pop)
+>>>>>>> f906989 (Apply BUGFIX_T_DATASETS: init without time limit, n_pop-safe indices, README and BUGFIX doc)
 
                 for _ in range(nmutate_scenario):
                     jj = int(rng.choice(tail_indices))
