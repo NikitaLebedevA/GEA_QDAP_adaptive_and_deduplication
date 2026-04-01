@@ -1,0 +1,34 @@
+{
+  "num_runs": 30,
+  "iterations": 1000,
+  "population_size": 350,
+  "algorithm_types": [
+    "adaptive",
+    "non_adaptive",
+    "adaptive_wo_duplicates",
+    "non_adaptive_wo_duplicates"
+  ],
+  "algorithm": {
+    "crossover_rate": 0.9,
+    "mutation_rate": 0.3,
+    "scenario_crossover_rate": 0.5,
+    "scenario_mutation_rate": 0.2,
+    "p_fixed_x": 0.8,
+    "p_scenario1": 0.3,
+    "p_scenario2": 0.7,
+    "p_scenario3": 0.5,
+    "mask_mutation_index": 2,
+    "time_limit": 1000,
+    "adaptive_epsilon": 0.00001,
+    "adaptive_alpha": 0.1,
+    "adaptive_lambda_min": 0.4,
+    "adaptive_lambda_max": 0.5
+  },
+  "model_variants": {
+    "GA": {"enable_scenario": [false, false, false]},
+    "GEA_1": {"enable_scenario": [true, false, false]},
+    "GEA_2": {"enable_scenario": [false, true, false]},
+    "GEA_3": {"enable_scenario": [false, false, true]},
+    "GEA": {"enable_scenario": [true, true, true]}
+  }
+}
