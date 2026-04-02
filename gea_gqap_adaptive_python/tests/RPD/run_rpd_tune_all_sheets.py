@@ -1,19 +1,5 @@
 #!/usr/bin/env python3
-"""
-Запуск run_rpd_tuning_debug.py последовательно для каждого листа Taguchi в taguchi_config_RPD.json.
-
-По умолчанию: листы GEA_1, GEA_2, GEA_3, блок adaptive (как в Excel). Для каждого листа
-пишется отдельный JSON: results/rpd_tuning_<sheet>_<block>.json
-
-Переопределение окружения (iterations, time_limit, …) — те же переменные, что у
-run_rpd_tuning_debug.py (RPD_ITERATIONS, RPD_TIME_LIMIT, RPD_NUM_RUNS, …).
-
-Пример (полноценный тюнинг на кластере):
-  export RPD_ITERATIONS=1000 RPD_TIME_LIMIT=1000 RPD_NUM_RUNS=5
-  python3 run_rpd_tune_all_sheets.py
-
-Дальше перенос коэффициентов в тест: `export_recommended_to_test_config.py` и `README_RPD.md`.
-"""
+"""Все листы из taguchi JSON (или RPD_SHEETS) × RPD_BLOCKS (по умолчанию adaptive,base). Подробности: README_RPD.md."""
 
 from __future__ import annotations
 
@@ -32,24 +18,22 @@ def _sheet_names_from_config() -> list[str]:
 
 
 def main() -> None:
-    raw = os.environ.get("RPD_SHEETS", "").strip()
-    if raw:
-        sheets = [s.strip() for s in raw.split(",") if s.strip()]
-    else:
-        sheets = _sheet_names_from_config()
+    raw_sheets = os.environ.get("RPD_SHEETS", "").strip()
+    sheets = [s.strip() for s in raw_sheets.split(",") if s.strip()] if raw_sheets else _sheet_names_from_config()
+    blocks = [b.strip() for b in os.environ.get("RPD_BLOCKS", "adaptive,base").split(",") if b.strip()]
 
-    block = os.environ.get("RPD_BLOCK", "adaptive")
-    print(f"Sheets: {sheets}, block={block}", flush=True)
+    print(f"Sheets: {sheets}", flush=True)
+    print(f"Blocks: {blocks}", flush=True)
 
     sys.path.insert(0, str(TEST_DIR))
-    os.environ["RPD_BLOCK"] = block
-
     import run_rpd_tuning_debug as rpd  # noqa: E402
 
     for sheet in sheets:
         os.environ["RPD_SHEET"] = sheet
-        print(f"\n{'='*60}\n>>> RPD sheet={sheet} block={block}\n{'='*60}", flush=True)
-        rpd.main()
+        for block in blocks:
+            os.environ["RPD_BLOCK"] = block
+            print(f">>> RPD {sheet} / {block}", flush=True)
+            rpd.main()
 
 
 if __name__ == "__main__":

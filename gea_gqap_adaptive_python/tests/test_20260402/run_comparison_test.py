@@ -31,7 +31,29 @@ sys.path.insert(0, str(TEST_DIR.parent.parent))
 sys.path.insert(0, str(TEST_DIR.parent))
 sys.path.insert(0, str(TEST_DIR.parent.parent.parent / "GEA_GQAP_Python"))
 
-from comparison_config_merge import merged_algorithm_for_model
+VARIANT_KEY_SEP = "|"
+
+
+def variant_config_key(model_key: str, algo_type: str) -> str:
+    return f"{model_key}{VARIANT_KEY_SEP}{algo_type}"
+
+
+def _merged_algorithm_for_variant(
+    base: Dict[str, Any],
+    by_model: Dict[str, Dict[str, Any]],
+    by_variant: Dict[str, Dict[str, Any]],
+    model_key: str,
+    algo_type: str,
+) -> Dict[str, Any]:
+    """algorithm_by_variant[model|type] > algorithm_by_model[model] > algorithm."""
+    out = dict(base or {})
+    vk = variant_config_key(model_key, algo_type)
+    if by_variant and vk in by_variant:
+        out.update(by_variant[vk])
+    elif by_model and model_key in by_model:
+        out.update(by_model[model_key])
+    return out
+
 
 from gea_gqap_adaptive_python import (
     AdaptiveAlgorithmConfig,
@@ -105,13 +127,16 @@ MODEL_VARIANTS = CONFIG["model_variants_tuple"]
 ALGORITHM_TYPES = CONFIG["algorithm_types"]
 ALGORITHM = CONFIG.get("algorithm", {})
 ALGORITHM_BY_MODEL = CONFIG.get("algorithm_by_model") or {}
+ALGORITHM_BY_VARIANT = CONFIG.get("algorithm_by_variant") or {}
 NUM_RUNS = CONFIG.get("num_runs", 30)
 ITERATIONS = CONFIG.get("iterations", 1000)
 POPULATION_SIZE = CONFIG.get("population_size", 350)
 
 
-def _algorithm_for(model_key: str) -> Dict[str, Any]:
-    return merged_algorithm_for_model(ALGORITHM, ALGORITHM_BY_MODEL, model_key)
+def _algorithm_for(model_key: str, algo_type: str) -> Dict[str, Any]:
+    return _merged_algorithm_for_variant(
+        ALGORITHM, ALGORITHM_BY_MODEL, ALGORITHM_BY_VARIANT, model_key, algo_type
+    )
 
 
 def calculate_statistics(values: List[float]) -> Dict[str, float]:
@@ -131,7 +156,8 @@ def _make_adaptive_config(
     enable_scenario: Tuple[bool, bool, bool],
     deduplicate: bool,
 ):
-    alg = _algorithm_for(model_key)
+    algo_type = "adaptive_wo_duplicates" if deduplicate else "adaptive"
+    alg = _algorithm_for(model_key, algo_type)
     it = int(alg.get("iterations", ITERATIONS))
     pop = int(alg.get("population_size", POPULATION_SIZE))
     return AdaptiveAlgorithmConfig(
@@ -161,7 +187,8 @@ def _make_non_adaptive_config(
     enable_scenario: Tuple[bool, bool, bool],
     deduplicate: bool,
 ):
-    alg = _algorithm_for(model_key)
+    algo_type = "non_adaptive_wo_duplicates" if deduplicate else "non_adaptive"
+    alg = _algorithm_for(model_key, algo_type)
     it = int(alg.get("iterations", ITERATIONS))
     pop = int(alg.get("population_size", POPULATION_SIZE))
     return AlgorithmConfig(
@@ -365,7 +392,11 @@ def run_dataset_tests(dataset_name: str, output_dir: Path) -> Dict[str, Any]:
         "population_size": POPULATION_SIZE,
         "time_limit_seconds": float(ALGORITHM.get("time_limit", 1000)),
         "algorithm_types": ALGORITHM_TYPES,
-        "parameters_resolved_by_model": {mk: _algorithm_for(mk) for mk in MODEL_VARIANTS},
+        "parameters_resolved_by_variant": {
+            variant_config_key(mk, at): _algorithm_for(mk, at)
+            for mk in MODEL_VARIANTS
+            for at in ALGORITHM_TYPES
+        },
         "models": models_results,
     }
     if output_dir:
@@ -459,7 +490,9 @@ def _main_impl(test_dir: Path, results_dir: Path, log_path: Path):
     print(f"[{_ts()}] Модели: {', '.join(MODEL_VARIANTS.keys())}")
     print(f"[{_ts()}] Датасетов: {len(datasets)} (T + c), по {NUM_RUNS} запусков на тип")
     print(f"[{_ts()}] Итераций (база): {ITERATIONS}, популяция (база): {POPULATION_SIZE}, лимит времени: {time_limit} с")
-    if ALGORITHM_BY_MODEL:
+    if ALGORITHM_BY_VARIANT:
+        print(f"[{_ts()}] algorithm_by_variant: {len(ALGORITHM_BY_VARIANT)} ключей", flush=True)
+    elif ALGORITHM_BY_MODEL:
         print(f"[{_ts()}] Параметры по моделям: {', '.join(ALGORITHM_BY_MODEL.keys())}", flush=True)
     print(f"[{_ts()}] Параллельных воркеров: {NUM_WORKERS}")
     print(f"[{_ts()}] Всего задач: {total_tasks}")
@@ -493,7 +526,12 @@ def _main_impl(test_dir: Path, results_dir: Path, log_path: Path):
             "num_workers": NUM_WORKERS,
             "algorithm_base": ALGORITHM,
             "algorithm_by_model": ALGORITHM_BY_MODEL,
-            "parameters_resolved_by_model": {mk: _algorithm_for(mk) for mk in MODEL_VARIANTS},
+            "algorithm_by_variant": ALGORITHM_BY_VARIANT,
+            "parameters_resolved_by_variant": {
+                variant_config_key(mk, at): _algorithm_for(mk, at)
+                for mk in MODEL_VARIANTS
+                for at in ALGORITHM_TYPES
+            },
         },
         "datasets": [r["dataset"] for r in all_results],
         "results": all_results,

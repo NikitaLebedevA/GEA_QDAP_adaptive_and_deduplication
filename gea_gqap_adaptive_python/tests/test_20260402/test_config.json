@@ -11,85 +11,295 @@
   "algorithm": {
     "mask_mutation_index": 2,
     "time_limit": 1000,
-    "adaptive_epsilon": 0.00001
-  },
-  "algorithm_by_model": {
-    "GA": {
-      "population_size": 350,
-      "crossover_rate": 0.9,
-      "mutation_rate": 0.3,
-      "scenario_crossover_rate": 0.5,
-      "scenario_mutation_rate": 0.2,
-      "p_fixed_x": 0.8,
-      "p_scenario1": 0.3,
-      "p_scenario2": 0.5,
-      "p_scenario3": 0.5,
-      "adaptive_alpha": 0.1,
-      "adaptive_lambda_min": 0.4,
-      "adaptive_lambda_max": 0.5
-    },
-    "GEA_1": {
-      "population_size": 350,
-      "crossover_rate": 0.7,
-      "mutation_rate": 0.2,
-      "scenario_crossover_rate": 0.5,
-      "scenario_mutation_rate": 0.2,
-      "p_fixed_x": 0.5,
-      "p_scenario1": 0.5,
-      "p_scenario2": 0.5,
-      "p_scenario3": 0.5,
-      "adaptive_alpha": 0.2,
-      "adaptive_lambda_min": 0.3,
-      "adaptive_lambda_max": 1.0
-    },
-    "GEA_2": {
-      "population_size": 350,
-      "crossover_rate": 0.9,
-      "mutation_rate": 0.3,
-      "scenario_crossover_rate": 0.5,
-      "scenario_mutation_rate": 0.2,
-      "p_fixed_x": 0.8,
-      "p_scenario1": 0.3,
-      "p_scenario2": 0.7,
-      "p_scenario3": 0.5,
-      "adaptive_alpha": 0.1,
-      "adaptive_lambda_min": 0.4,
-      "adaptive_lambda_max": 0.5
-    },
-    "GEA_3": {
-      "population_size": 350,
-      "crossover_rate": 0.7,
-      "mutation_rate": 0.2,
-      "scenario_crossover_rate": 0.5,
-      "scenario_mutation_rate": 0.2,
-      "p_fixed_x": 0.5,
-      "p_scenario1": 0.5,
-      "p_scenario2": 0.5,
-      "p_scenario3": 0.5,
-      "adaptive_alpha": 0.2,
-      "adaptive_lambda_min": 0.3,
-      "adaptive_lambda_max": 1.0
-    },
-    "GEA": {
-      "population_size": 350,
-      "crossover_rate": 0.9,
-      "mutation_rate": 0.3,
-      "scenario_crossover_rate": 0.5,
-      "scenario_mutation_rate": 0.2,
-      "p_fixed_x": 0.8,
-      "p_scenario1": 0.5,
-      "p_scenario2": 0.7,
-      "p_scenario3": 0.5,
-      "adaptive_alpha": 0.1,
-      "adaptive_lambda_min": 0.4,
-      "adaptive_lambda_max": 0.5
-    }
+    "adaptive_epsilon": 1e-05
   },
   "model_variants": {
-    "GA": {"enable_scenario": [false, false, false]},
-    "GEA_1": {"enable_scenario": [true, false, false]},
-    "GEA_2": {"enable_scenario": [false, true, false]},
-    "GEA_3": {"enable_scenario": [false, false, true]},
-    "GEA": {"enable_scenario": [true, true, true]}
+    "GA": {
+      "enable_scenario": [
+        false,
+        false,
+        false
+      ]
+    },
+    "GEA_1": {
+      "enable_scenario": [
+        true,
+        false,
+        false
+      ]
+    },
+    "GEA_2": {
+      "enable_scenario": [
+        false,
+        true,
+        false
+      ]
+    },
+    "GEA_3": {
+      "enable_scenario": [
+        false,
+        false,
+        true
+      ]
+    },
+    "GEA": {
+      "enable_scenario": [
+        true,
+        true,
+        true
+      ]
+    }
+  },
+  "algorithm_by_variant": {
+    "GA|adaptive": {
+      "population_size": 350,
+      "crossover_rate": 0.9,
+      "mutation_rate": 0.3,
+      "scenario_crossover_rate": 0.5,
+      "scenario_mutation_rate": 0.2,
+      "p_fixed_x": 0.8,
+      "p_scenario1": 0.3,
+      "p_scenario2": 0.5,
+      "p_scenario3": 0.5,
+      "adaptive_alpha": 0.1,
+      "adaptive_lambda_min": 0.4,
+      "adaptive_lambda_max": 0.5
+    },
+    "GA|adaptive_wo_duplicates": {
+      "population_size": 350,
+      "crossover_rate": 0.9,
+      "mutation_rate": 0.3,
+      "scenario_crossover_rate": 0.5,
+      "scenario_mutation_rate": 0.2,
+      "p_fixed_x": 0.8,
+      "p_scenario1": 0.3,
+      "p_scenario2": 0.5,
+      "p_scenario3": 0.5,
+      "adaptive_alpha": 0.1,
+      "adaptive_lambda_min": 0.4,
+      "adaptive_lambda_max": 0.5
+    },
+    "GA|non_adaptive": {
+      "population_size": 350,
+      "crossover_rate": 0.9,
+      "mutation_rate": 0.3,
+      "scenario_crossover_rate": 0.5,
+      "scenario_mutation_rate": 0.2,
+      "p_fixed_x": 0.8,
+      "p_scenario1": 0.3,
+      "p_scenario2": 0.5,
+      "p_scenario3": 0.5
+    },
+    "GA|non_adaptive_wo_duplicates": {
+      "population_size": 350,
+      "crossover_rate": 0.9,
+      "mutation_rate": 0.3,
+      "scenario_crossover_rate": 0.5,
+      "scenario_mutation_rate": 0.2,
+      "p_fixed_x": 0.8,
+      "p_scenario1": 0.3,
+      "p_scenario2": 0.5,
+      "p_scenario3": 0.5
+    },
+    "GEA_1|adaptive": {
+      "population_size": 350,
+      "crossover_rate": 0.7,
+      "mutation_rate": 0.2,
+      "scenario_crossover_rate": 0.5,
+      "scenario_mutation_rate": 0.2,
+      "p_fixed_x": 0.5,
+      "p_scenario1": 0.5,
+      "p_scenario2": 0.5,
+      "p_scenario3": 0.5,
+      "adaptive_alpha": 0.2,
+      "adaptive_lambda_min": 0.3,
+      "adaptive_lambda_max": 1.0
+    },
+    "GEA_1|adaptive_wo_duplicates": {
+      "population_size": 350,
+      "crossover_rate": 0.7,
+      "mutation_rate": 0.2,
+      "scenario_crossover_rate": 0.5,
+      "scenario_mutation_rate": 0.2,
+      "p_fixed_x": 0.5,
+      "p_scenario1": 0.5,
+      "p_scenario2": 0.5,
+      "p_scenario3": 0.5,
+      "adaptive_alpha": 0.2,
+      "adaptive_lambda_min": 0.3,
+      "adaptive_lambda_max": 1.0
+    },
+    "GEA_1|non_adaptive": {
+      "population_size": 350,
+      "crossover_rate": 0.7,
+      "mutation_rate": 0.2,
+      "scenario_crossover_rate": 0.5,
+      "scenario_mutation_rate": 0.2,
+      "p_fixed_x": 0.5,
+      "p_scenario1": 0.5,
+      "p_scenario2": 0.5,
+      "p_scenario3": 0.5
+    },
+    "GEA_1|non_adaptive_wo_duplicates": {
+      "population_size": 350,
+      "crossover_rate": 0.7,
+      "mutation_rate": 0.2,
+      "scenario_crossover_rate": 0.5,
+      "scenario_mutation_rate": 0.2,
+      "p_fixed_x": 0.5,
+      "p_scenario1": 0.5,
+      "p_scenario2": 0.5,
+      "p_scenario3": 0.5
+    },
+    "GEA_2|adaptive": {
+      "population_size": 350,
+      "crossover_rate": 0.9,
+      "mutation_rate": 0.3,
+      "scenario_crossover_rate": 0.5,
+      "scenario_mutation_rate": 0.2,
+      "p_fixed_x": 0.8,
+      "p_scenario1": 0.3,
+      "p_scenario2": 0.7,
+      "p_scenario3": 0.5,
+      "adaptive_alpha": 0.1,
+      "adaptive_lambda_min": 0.4,
+      "adaptive_lambda_max": 0.5
+    },
+    "GEA_2|adaptive_wo_duplicates": {
+      "population_size": 350,
+      "crossover_rate": 0.9,
+      "mutation_rate": 0.3,
+      "scenario_crossover_rate": 0.5,
+      "scenario_mutation_rate": 0.2,
+      "p_fixed_x": 0.8,
+      "p_scenario1": 0.3,
+      "p_scenario2": 0.7,
+      "p_scenario3": 0.5,
+      "adaptive_alpha": 0.1,
+      "adaptive_lambda_min": 0.4,
+      "adaptive_lambda_max": 0.5
+    },
+    "GEA_2|non_adaptive": {
+      "population_size": 350,
+      "crossover_rate": 0.9,
+      "mutation_rate": 0.3,
+      "scenario_crossover_rate": 0.5,
+      "scenario_mutation_rate": 0.2,
+      "p_fixed_x": 0.8,
+      "p_scenario1": 0.3,
+      "p_scenario2": 0.7,
+      "p_scenario3": 0.5
+    },
+    "GEA_2|non_adaptive_wo_duplicates": {
+      "population_size": 350,
+      "crossover_rate": 0.9,
+      "mutation_rate": 0.3,
+      "scenario_crossover_rate": 0.5,
+      "scenario_mutation_rate": 0.2,
+      "p_fixed_x": 0.8,
+      "p_scenario1": 0.3,
+      "p_scenario2": 0.7,
+      "p_scenario3": 0.5
+    },
+    "GEA_3|adaptive": {
+      "population_size": 350,
+      "crossover_rate": 0.7,
+      "mutation_rate": 0.2,
+      "scenario_crossover_rate": 0.5,
+      "scenario_mutation_rate": 0.2,
+      "p_fixed_x": 0.5,
+      "p_scenario1": 0.5,
+      "p_scenario2": 0.5,
+      "p_scenario3": 0.5,
+      "adaptive_alpha": 0.2,
+      "adaptive_lambda_min": 0.3,
+      "adaptive_lambda_max": 1.0
+    },
+    "GEA_3|adaptive_wo_duplicates": {
+      "population_size": 350,
+      "crossover_rate": 0.7,
+      "mutation_rate": 0.2,
+      "scenario_crossover_rate": 0.5,
+      "scenario_mutation_rate": 0.2,
+      "p_fixed_x": 0.5,
+      "p_scenario1": 0.5,
+      "p_scenario2": 0.5,
+      "p_scenario3": 0.5,
+      "adaptive_alpha": 0.2,
+      "adaptive_lambda_min": 0.3,
+      "adaptive_lambda_max": 1.0
+    },
+    "GEA_3|non_adaptive": {
+      "population_size": 350,
+      "crossover_rate": 0.7,
+      "mutation_rate": 0.2,
+      "scenario_crossover_rate": 0.5,
+      "scenario_mutation_rate": 0.2,
+      "p_fixed_x": 0.5,
+      "p_scenario1": 0.5,
+      "p_scenario2": 0.5,
+      "p_scenario3": 0.5
+    },
+    "GEA_3|non_adaptive_wo_duplicates": {
+      "population_size": 350,
+      "crossover_rate": 0.7,
+      "mutation_rate": 0.2,
+      "scenario_crossover_rate": 0.5,
+      "scenario_mutation_rate": 0.2,
+      "p_fixed_x": 0.5,
+      "p_scenario1": 0.5,
+      "p_scenario2": 0.5,
+      "p_scenario3": 0.5
+    },
+    "GEA|adaptive": {
+      "population_size": 350,
+      "crossover_rate": 0.9,
+      "mutation_rate": 0.3,
+      "scenario_crossover_rate": 0.5,
+      "scenario_mutation_rate": 0.2,
+      "p_fixed_x": 0.8,
+      "p_scenario1": 0.5,
+      "p_scenario2": 0.7,
+      "p_scenario3": 0.5,
+      "adaptive_alpha": 0.1,
+      "adaptive_lambda_min": 0.4,
+      "adaptive_lambda_max": 0.5
+    },
+    "GEA|adaptive_wo_duplicates": {
+      "population_size": 350,
+      "crossover_rate": 0.9,
+      "mutation_rate": 0.3,
+      "scenario_crossover_rate": 0.5,
+      "scenario_mutation_rate": 0.2,
+      "p_fixed_x": 0.8,
+      "p_scenario1": 0.5,
+      "p_scenario2": 0.7,
+      "p_scenario3": 0.5,
+      "adaptive_alpha": 0.1,
+      "adaptive_lambda_min": 0.4,
+      "adaptive_lambda_max": 0.5
+    },
+    "GEA|non_adaptive": {
+      "population_size": 350,
+      "crossover_rate": 0.9,
+      "mutation_rate": 0.3,
+      "scenario_crossover_rate": 0.5,
+      "scenario_mutation_rate": 0.2,
+      "p_fixed_x": 0.8,
+      "p_scenario1": 0.5,
+      "p_scenario2": 0.7,
+      "p_scenario3": 0.5
+    },
+    "GEA|non_adaptive_wo_duplicates": {
+      "population_size": 350,
+      "crossover_rate": 0.9,
+      "mutation_rate": 0.3,
+      "scenario_crossover_rate": 0.5,
+      "scenario_mutation_rate": 0.2,
+      "p_fixed_x": 0.8,
+      "p_scenario1": 0.5,
+      "p_scenario2": 0.7,
+      "p_scenario3": 0.5
+    }
   }
 }
