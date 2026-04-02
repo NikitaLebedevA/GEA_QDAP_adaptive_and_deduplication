@@ -12,20 +12,26 @@ export MKL_NUM_THREADS=1
 export OPENBLAS_NUM_THREADS=1
 export NUMEXPR_NUM_THREADS=1
 
-# Parallelism (processes). Keep BLAS single-threaded above.
 export NUM_WORKERS=16
 export RPD_NUM_WORKERS=16
 
-# Tuning controls
-export RPD_SHEET="GEA_2"
-export RPD_BLOCK="adaptive"
+# Пять архитектур как в run_comparison_test: GA, GEA_1, GEA_2, GEA_3, GEA
+export RPD_EVAL_MODELS=GA,GEA_1,GEA_2,GEA_3,GEA
+
+# Типы прогона для усреднения отклика перед MEPFM (нагрузка × число токенов):
+#   adaptive | non_adaptive | adaptive_wo_duplicates | non_adaptive_wo_duplicates
+# По умолчанию только adaptive (как классический RPD по адаптивному GEA).
+# Раскомментируйте строку ниже, чтобы учитывать все четыре типа (сильно дольше):
+# export RPD_EVAL_TYPES=adaptive,non_adaptive,adaptive_wo_duplicates,non_adaptive_wo_duplicates
+export RPD_EVAL_TYPES=adaptive
+
+export RPD_BLOCK=adaptive
 export RPD_NUM_RUNS=5
 export RPD_ITERATIONS=1000
 export RPD_TIME_LIMIT=1000
-# export RPD_MAX_TAGUCHI_ROWS=27
 
 module load Python
 source activate gea_gqap_env
 
-poetry run python gea_gqap_adaptive_python/tests/RPD/run_rpd_tuning_debug.py
-
+# Все листы из taguchi_config_RPD.json (GEA_1, GEA_2, GEA_3) → отдельные JSON в tests/RPD/results/
+poetry run python gea_gqap_adaptive_python/tests/RPD/run_rpd_tune_all_sheets.py

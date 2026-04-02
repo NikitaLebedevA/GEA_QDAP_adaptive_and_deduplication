@@ -62,7 +62,10 @@ def main() -> None:
     for j in range(n_params, len(axes)):
         fig.delaxes(axes[j])
 
-    title = f"Tuning results for {payload['excel']['sheet']} ({payload['excel']['block']})"
+    meta = payload.get("taguchi_config") or payload.get("excel") or {}
+    sheet = meta.get("sheet", "?")
+    block = meta.get("block", "?")
+    title = f"Tuning results for {sheet} ({block})"
     plt.suptitle(title, fontsize=16, fontweight="bold")
     plt.tight_layout()
 

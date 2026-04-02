@@ -27,6 +27,21 @@ export RPD_NUM_WORKERS=16
 export RPD_BLOCK=adaptive
 ```
 
+### Пять архитектур и типы алгоритма
+
+По умолчанию для **каждой** строки Taguchi считается средний `best_cost` по датасетам и прогонам для моделей из `RPD_EVAL_MODELS` (как в сравнительном тесте):
+
+- `GA`, `GEA_1`, `GEA_2`, `GEA_3`, `GEA` — значения по умолчанию: все пять.
+
+Для каждой модели отклик **усредняется** по токенам из `RPD_EVAL_TYPES` (затем отдельный MEPFM и свой `recommended`):
+
+- `adaptive`, `non_adaptive`, `adaptive_wo_duplicates`, `non_adaptive_wo_duplicates`  
+- По умолчанию: только `adaptive`. Четыре токена увеличивают число задач в **4 раза**.
+
+Итог в JSON: `recommended_by_model` (по одному набору коэффициентов на модель), плюс поля `recommended` / `response_mean_best_cost` для **листа** (`primary_model_for_legacy_fields` = имя листа, если оно есть в `RPD_EVAL_MODELS`).
+
+Кластерный запуск всех листов: корневой **`run_test_RPD.sbatch`** (вызывает `run_rpd_tune_all_sheets.py`).
+
 Опционально:
 
 - `RPD_TAGUCHI_CONFIG` — путь к своему `taguchi_config_RPD.json`.

@@ -29,13 +29,22 @@ def _parse_rpd_filename(name: str) -> Tuple[str, str] | None:
     return m.group(1), m.group(2)
 
 
-def _load_recommended(path: Path) -> Dict[str, Any]:
+def _config_for_sheet_from_rpd_json(path: Path, sheet: str) -> Dict[str, Any]:
+    """
+    Берёт коэффициенты для листа Taguchi: recommended_by_model[sheet], иначе legacy recommended.
+    """
     data = json.loads(path.read_text(encoding="utf-8"))
+    rbm = data.get("recommended_by_model") or {}
+    if sheet in rbm and isinstance(rbm[sheet], dict):
+        ck = rbm[sheet].get("config_kwargs")
+        if isinstance(ck, dict) and ck:
+            return dict(ck)
     rec = data.get("recommended") or {}
-    cfg = rec.get("config_kwargs")
-    if not isinstance(cfg, dict) or not cfg:
-        raise ValueError(f"Нет recommended.config_kwargs в {path}")
-    return dict(cfg)
+    if isinstance(rec, dict):
+        ck = rec.get("config_kwargs")
+        if isinstance(ck, dict) and ck:
+            return dict(ck)
+    raise ValueError(f"Нет recommended_by_model[{sheet!r}] и recommended.config_kwargs в {path}")
 
 
 def main() -> None:
@@ -80,7 +89,7 @@ def main() -> None:
         if block != args.block:
             continue
         try:
-            algorithm_by_model[sheet] = _load_recommended(path)
+            algorithm_by_model[sheet] = _config_for_sheet_from_rpd_json(path, sheet)
         except ValueError as e:
             print(f"Пропуск {path.name}: {e}", file=sys.stderr)
 
