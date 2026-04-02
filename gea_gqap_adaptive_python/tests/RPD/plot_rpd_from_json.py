@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Графики по итоговому JSON run_rpd_tuning_debug.py (MEPFM + кривые отклика по строкам Taguchi).
+Графики по итоговому JSON из run_rpd_tune_all_sheets.py (MEPFM + кривые отклика по строкам Taguchi).
 
 Пример:
   python3 plot_rpd_from_json.py results/rpd_tuning_GEA_2_adaptive.json
